@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * @file
+ * This is necessary to suppress the output of E_DEPRECATED warnings from the.
+ */
+
+// Recurly PHP library. Which isn't yet updated for PHP8+, and throws some
+// deprecations. But still works.
+//
+// The problem is, these notices get output as X-Drupal-Assertion- HTTP headers
+// the \Drupal\Core\Test\HttpClientMiddleware\TestHttpClientMiddleware sees them
+// and since they're E_DEPRECATED and not E_USER_DEPRECATED turns around and
+// raises an Exception for them and causes some of the tests to fail.
+//
+// In production you don't see this because:
+// 1. You configure Drupal to not display errors, and
+// 2. In _drupal_log_error() the function to convert errors to HTTP headers is
+//    only called if the site is under test.
+//
+// But if suppress them, it works.
+// @todo Remove this when the Recurly client is updated.
+if (defined('DRUPAL_TEST_IN_CHILD_SITE') && DRUPAL_TEST_IN_CHILD_SITE === TRUE) {
+  error_reporting(E_ALL ^ E_DEPRECATED);
+}

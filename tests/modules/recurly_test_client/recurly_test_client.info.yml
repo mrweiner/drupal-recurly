@@ -1,0 +1,12 @@
+name: Recurly Test Client
+description: 'Replaces the default Recurly API client with one that returns canned responses.'
+dependencies:
+  - recurly:recurly
+core_version_requirement: ^9 || ^10
+package: Recurly
+type: module
+
+# Information added by Drupal.org packaging script on 2023-11-09
+version: '5.0.1'
+project: 'recurly'
+datestamp: 1699574019

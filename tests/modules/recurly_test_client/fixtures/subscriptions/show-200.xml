@@ -1,0 +1,52 @@
+HTTP/1.1 200 OK
+Content-Type: application/xml; charset=utf-8
+
+<?xml version="1.0" encoding="UTF-8"?>
+<subscription href="https://api.recurly.com/v2/subscriptions/32558dd8a07eec471fbe6642d3a422f4">
+  <account href="https://api.recurly.com/v2/accounts/13daac568eab9337da5235a3e23899"/>
+  <invoice href="https://api.recurly.com/v2/invoices/1002"/>
+  <plan href="https://api.recurly.com/v2/plans/quasi_aut9">
+    <plan_code>silver</plan_code>
+    <name>Silver Plan</name>
+  </plan>
+  <uuid>32558dd8a07eec471fbe6642d3a422f4</uuid>
+  <state>active</state>
+  <unit_amount_in_cents type="integer">5982</unit_amount_in_cents>
+  <currency>USD</currency>
+  <quantity type="integer">1</quantity>
+  <activated_at type="datetime">2015-11-08T11:02:04Z</activated_at>
+  <canceled_at nil="nil"></canceled_at>
+  <expires_at nil="nil"></expires_at>
+  <updated_at type="datetime">2018-03-19T17:01:49Z</updated_at>
+  <total_billing_cycles type="integer">6</total_billing_cycles>
+  <remaining_billing_cycles type="integer">6</remaining_billing_cycles>
+  <current_period_started_at type="datetime">2015-11-08T11:02:04Z</current_period_started_at>
+  <current_period_ends_at type="datetime">2016-11-08T11:02:04Z</current_period_ends_at>
+  <trial_started_at type="datetime">2015-11-08T11:02:04Z</trial_started_at>
+  <trial_ends_at type="datetime">2016-11-08T11:02:04Z</trial_ends_at>
+  <terms_and_conditions>Some Terms and Conditions</terms_and_conditions>
+  <customer_notes>Some Customer Notes</customer_notes>
+  <started_with_gift type="boolean">false</started_with_gift>
+  <converted_at nil="nil"/>
+  <imported_trial type="boolean">false</imported_trial>
+  <no_billing_info_reason/>
+  <tax_in_cents type="integer">383</tax_in_cents>
+  <tax_type>usst</tax_type>
+  <tax_region>CA</tax_region>
+  <tax_rate type="float">0.085</tax_rate>
+  <po_number nil="nil"></po_number>
+  <net_terms type="integer">0</net_terms>
+  <collection_method>automatic</collection_method>
+  <shipping_amount_in_cents>999</shipping_amount_in_cents>
+  <shipping_method_code>fast_fast_fast</shipping_method_code>
+  <renewal_billing_cycles type="integer">4</renewal_billing_cycles>
+  <auto_renew type="boolean">true</auto_renew>
+  <current_term_started_at type="datetime">2018-06-25T21:35:49Z</current_term_started_at>
+  <current_term_ends_at type="datetime">2019-06-25T21:35:49Z</current_term_ends_at>
+  <subscription_add_ons type="array">
+  </subscription_add_ons>
+  <a name="cancel" href="https://api.recurly.com/v2/subscriptions/32558dd8a07eec471fbe6642d3a422f4/cancel" method="put"/>
+  <a name="terminate" href="https://api.recurly.com/v2/subscriptions/32558dd8a07eec471fbe6642d3a422f4/terminate" method="put"/>
+  <a name="postpone" href="https://api.recurly.com/v2/subscriptions/32558dd8a07eec471fbe6642d3a422f4/postpone" method="put"/>
+  <a name="notes" href="https://api.recurly.com/v2/subscriptions/32558dd8a07eec471fbe6642d3a422f4/notes" method="put"/>
+</subscription>

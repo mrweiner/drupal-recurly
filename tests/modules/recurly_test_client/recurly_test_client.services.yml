@@ -1,0 +1,5 @@
+services:
+  recurly_test_client.mock_client:
+      decorates: 'recurly.client'
+      class: Drupal\recurly_test_client\RecurlyMockClientFactory
+      arguments: ['@config.factory', '@logger.factory', '@messenger']

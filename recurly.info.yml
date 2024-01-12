@@ -1,0 +1,13 @@
+name: Recurly
+description: 'Provides API integration with Recurly using their PHP client library.'
+dependencies:
+  - token:token
+core_version_requirement: ^9 || ^10
+package: Recurly
+type: module
+configure: recurly.settings_form
+
+# Information added by Drupal.org packaging script on 2023-11-09
+version: '5.0.1'
+project: 'recurly'
+datestamp: 1699574019

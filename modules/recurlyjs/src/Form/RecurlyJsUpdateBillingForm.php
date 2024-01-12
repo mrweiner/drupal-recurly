@@ -1,0 +1,131 @@
+<?php
+
+namespace Drupal\recurlyjs\Form;
+
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * RecurlyJS update billing form.
+ */
+class RecurlyJsUpdateBillingForm extends RecurlyJsFormBase {
+
+  /**
+   * Card type string to match against Recurly response.
+   */
+  const CARD_TYPE_AMEX = 'American Express';
+
+  /**
+   * American Express card number length.
+   */
+  const CARD_LENGTH_AMEX = 11;
+
+  /**
+   * Standard credit card length.
+   */
+  const CARD_LENGTH_OTHER = 12;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormId() {
+    return 'recurlyjs_update_billing';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state, RouteMatchInterface $route_match = NULL) {
+    $entity_type = $this->config('recurly.settings')->get('recurly_entity_type');
+    $entity = $route_match->getParameter($entity_type);
+
+    // See if we have a local mapping of entity ID to Recurly account code.
+    $recurly_account = recurly_account_load([
+      'entity_type' => $entity_type,
+      'entity_id' => $entity->id(),
+    ]);
+
+    try {
+      $billing_info = \Recurly_BillingInfo::get($recurly_account->account_code, $this->recurlyClient);
+      // Format expiration date.
+      $exp_date = sprintf('%1$02d', Html::escape($billing_info->month)) . '/' . Html::escape($billing_info->year);
+      // Determine the correct number of masked card numbers depending on the
+      // type of card.
+      $mask_length = strcasecmp($billing_info->card_type, self::CARD_TYPE_AMEX) === 0 ? self::CARD_LENGTH_AMEX : self::CARD_LENGTH_OTHER;
+      $form['existing'] = [
+        '#theme' => 'recurly_credit_card_information',
+        '#card_type' => Html::escape($billing_info->card_type),
+        '#first_name' => Html::escape($billing_info->first_name),
+        '#last_name' => Html::escape($billing_info->last_name),
+        '#exp_date' => $exp_date,
+        '#last_four' => Html::escape($billing_info->last_four),
+        '#card_num_masked' => str_repeat('x', $mask_length) . Html::escape($billing_info->last_four),
+      ];
+    }
+    catch (\Recurly_NotFoundError $e) {
+      $this->logger('recurlyjs')->notice('Unable to retrieve billing information. Received the following error: @error', ['@error' => $e->getMessage()]);
+      $this->messenger()->addError($this->t('Unable to retrieve billing information.'));
+      return $form;
+    }
+
+    $form['#entity_type'] = $entity_type;
+    $form['#entity'] = $entity;
+
+    $this->setBillingInfo($billing_info);
+    $form = parent::buildForm($form, $form_state);
+
+    $form['actions'] = [
+      '#type' => 'actions',
+    ];
+    $form['actions']['submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Update'),
+      '#submit' => ['::submitForm'],
+    ];
+
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    parent::submitForm($form, $form_state);
+    $entity_type = $form['#entity_type'];
+    $entity = $form['#entity'];
+    $recurly_token = $form_state->getValue('recurly-token');
+
+    $recurly_account = recurly_account_load([
+      'entity_type' => $entity_type,
+      'entity_id' => $entity->id(),
+    ]);
+
+    if ($recurly_token && $recurly_account) {
+      try {
+        $billing_info = new \Recurly_BillingInfo(NULL, $this->recurlyClient);
+        $billing_info->account_code = $recurly_account->account_code;
+        $billing_info->token_id = $recurly_token;
+        $billing_info->update();
+      }
+      catch (\Recurly_ValidationError $e) {
+        // There was an error validating information in the form. For example,
+        // credit card was declined. Let the user know. These errors are logged
+        // in Recurly.
+        $this->messenger()->addError($this->t('<strong>Unable to update account:</strong><br/>@error', ['@error' => $e->getMessage()]));
+      }
+      catch (\Recurly_NotFoundError $e) {
+        $this->messenger()->addError($this->t('Could not find account or token is invalid or expired.'));
+        $form_state->setRebuild(TRUE);
+      }
+      catch (\Recurly_Error $e) {
+        // Catch all other errors. Log the details, and display a message for
+        // the user.
+        $this->logger('recurlyjs')->error('Billing information update error: @error', ['@error' => $e->getMessage()]);
+        $this->messenger()->addMessage($this->t('An error occured while trying to update your account. Please contact a site administrator.'));
+        $form_state->setRebuild(TRUE);
+      }
+    }
+  }
+
+}
