@@ -7,12 +7,21 @@
     "issues": "https://www.drupal.org/project/recurly",
     "source": "https://cgit.drupalcode.org/recurly"
   },
-  "license": "GPL-2.0-or-later",
+  "license": "GPL-2.0+",
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "recurly/recurly-client": "^2.7.0",
+    "cweagans/composer-patches": "^1.6",
+    "recurly-v2/recurly-clientv2": "v2.x-dev",
     "drupal/token": "^1.6",
     "drupal/core": "^8 || ^9 || ^10"
+  },
+  "extra": {
+    "patches": {
+      "drupal/recurly": {
+        "Add webhook events": "https://www.drupal.org/files/issues/2020-04-21/recurlyWebhookEvents-3129434-9.patch"
+      }
+    }
   }
 }
+

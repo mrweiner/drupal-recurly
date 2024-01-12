@@ -5,9 +5,9 @@
 
 ## Why this repo
 
-For now, DYWM requires both versions of the recurly lib. So this modifies the composer.json to use an alternate source of the repository.
-
-Tracked version: 5.0.1
+- For now, DYWM requires both versions of the recurly lib. So this modifies the composer.json to use an alternate source of the repository.
+- Tracked version: 5.0.1
+- Replaces https://www.drupal.org/sandbox/mrweiner/3131471
 
 ## Description
 This module provides API integration with [Recurly](https://recurly.com/), a
